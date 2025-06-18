@@ -2,6 +2,7 @@ import { useState, FormEvent } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/reduxHooks';
 import { thunkLogin, clearErrors } from './authSlice';
 import { useNavigate } from 'react-router-dom';
+import GoogleLoginButton from './GoogleLoginButton';
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
@@ -16,7 +17,7 @@ const LoginForm = () => {
     const resultAction = await dispatch(thunkLogin({ email, password }));
 
     if (thunkLogin.fulfilled.match(resultAction)) {
-      navigate('/dashboard'); // 登录成功后跳转页面
+      navigate('/'); 
     }
   };
 
@@ -75,6 +76,8 @@ const LoginForm = () => {
           {status === 'loading' ? 'Logging in...' : 'Log In'}
         </button>
       </form>
+
+      <GoogleLoginButton />
     </div>
   );
 };

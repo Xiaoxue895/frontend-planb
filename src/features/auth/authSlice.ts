@@ -26,6 +26,7 @@ export const thunkLogin = createAsyncThunk<
   const response = await fetch('/api/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include', 
     body: JSON.stringify(credentials),
   });
 
@@ -39,6 +40,30 @@ export const thunkLogin = createAsyncThunk<
   }
 });
 
+export const thunkGoogleLogin = createAsyncThunk<
+  User,
+  string,
+  { rejectValue: Record<string, string> }
+>('auth/googleLogin', async (idToken, { rejectWithValue }) => {
+  const response = await fetch('/api/auth/google', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',  
+    body: JSON.stringify({ idToken }),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    return data.user; 
+  } else if (response.status < 500) {
+    const data = await response.json();
+    return rejectWithValue(data);
+  } else {
+    return rejectWithValue({ server: 'Google login failed. Please try again.' });
+  }
+});
+
+
 export const thunkSignup = createAsyncThunk<
   User,
   { email: string; username: string; password: string },
@@ -47,6 +72,7 @@ export const thunkSignup = createAsyncThunk<
   const response = await fetch('/api/auth/signup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',  
     body: JSON.stringify(userData),
   });
 
@@ -63,7 +89,9 @@ export const thunkSignup = createAsyncThunk<
 export const thunkAuthenticate = createAsyncThunk<User | null>(
   'auth/authenticate',
   async () => {
-    const response = await fetch('/api/auth/');
+    const response = await fetch('/api/auth/', {
+      credentials: 'include',  
+    });
     if (response.ok) {
       const data = await response.json();
       return data.errors ? null : data;
@@ -73,7 +101,9 @@ export const thunkAuthenticate = createAsyncThunk<User | null>(
 );
 
 export const thunkLogout = createAsyncThunk('auth/logout', async () => {
-  await fetch('/api/auth/logout');
+  await fetch('/api/auth/logout', {
+    credentials: 'include',  
+  });
   return null;
 });
 
@@ -124,9 +154,26 @@ const authSlice = createSlice({
       .addCase(thunkLogout.fulfilled, (state) => {
         state.user = null;
         state.status = 'idle';
-      });
+      })
+
+      .addCase(thunkGoogleLogin.pending, (state) => {
+        state.status = 'loading';
+        state.errors = null;
+      })
+
+      .addCase(thunkGoogleLogin.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.user = action.payload;
+      })
+      
+      .addCase(thunkGoogleLogin.rejected, (state, action) => {
+        state.status = 'failed';
+        state.errors = action.payload ?? { server: 'Google login failed' };
+      })
+
   },
 });
 
 export const { setUser, clearErrors } = authSlice.actions;
 export default authSlice.reducer;
+

@@ -1,3 +1,5 @@
+import ProfileButton from "@/features/auth/ProfileButton"
+
 const Navbar = () => {
     return (
       <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -16,6 +18,7 @@ const Navbar = () => {
               Launch App
             </a>
           </div>
+          <ProfileButton />
         </div>
       </nav>
     )
