@@ -1619,7 +1619,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function getOpenAIKey() {
         // In a real app, you would never expose the API key in the frontend
         // This is just for demo purposes
-        return 'sk-Rzm1d7oWsYBbr344RADBLwI1s-FBskjyZalmBjCfn_T3BlbkFJ6abSaPrF9wan5t3zyOBRxjynbv3FUBhJi6pPBSfW4A';
+        return 'YOUR_OPENAI_API_KEY_HERE';
     }
     
     /**
