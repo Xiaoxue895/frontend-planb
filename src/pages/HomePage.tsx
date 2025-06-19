@@ -1,8 +1,8 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
-import HeroSection from '../components/HeroSection';
-import HowItWorksSection from '../components/HowItWorksSection';
-import TestimonialsSection from '../components/TestimonialsSection';
+import HeroSection from '../features/home/components/HeroSection';
+import HowItWorksSection from '../features/home/components/HowItWorksSection';
+import TestimonialsSection from '../features/home/components/TestimonialsSection';
 import DownloadSection from '../components/DownloadSection';
 import Footer from '../components/Footer';
 

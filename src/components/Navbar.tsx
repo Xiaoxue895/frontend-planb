@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ProfileButton from '@/features/auth/ProfileButton';
 
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState('home');
@@ -56,18 +57,19 @@ const Navbar = () => {
 
           {/* Auth Buttons */}
           <div className="flex items-center space-x-3">
-            <button 
+            <ProfileButton />
+            {/* <button 
               className="login-btn px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors"
               id="loginBtn"
             >
               Login
-            </button>
-            <button 
+            </button> */}
+            {/* <button 
               className="signup-btn px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors"
               id="signupBtn"
             >
               Sign Up
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
