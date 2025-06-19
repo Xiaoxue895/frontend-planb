@@ -1,6 +1,6 @@
-import AboutPage from '@/features/about/aboutPage';
+import HomePage from './HomePage';
 
 export default function Home() {
-  return <AboutPage />;
+  return <HomePage />;
 }
 
