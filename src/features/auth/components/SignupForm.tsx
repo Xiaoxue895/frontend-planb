@@ -1,8 +1,8 @@
 import { useState, FormEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { AppDispatch, RootState } from '../../app/store';
-import { thunkSignup } from './authSlice';
+import { AppDispatch, RootState } from '../../../app/store';
+import { thunkSignup } from '../authSlice';
 
 interface SignupFormErrors {
   email?: string;

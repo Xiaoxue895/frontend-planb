@@ -1,7 +1,7 @@
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { useDispatch } from 'react-redux';
-import { AppDispatch } from '../../app/store';
-import { thunkGoogleLogin } from './authSlice'; 
+import { AppDispatch } from '@/app/store';
+import { thunkGoogleLogin } from '../authSlice';
 import { useNavigate } from 'react-router-dom';
 
 function GoogleLoginButton() {

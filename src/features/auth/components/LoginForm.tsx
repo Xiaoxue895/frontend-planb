@@ -1,6 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/reduxHooks';
-import { thunkLogin, clearErrors } from './authSlice';
+import { thunkLogin, clearErrors } from '../authSlice';
 import { useNavigate } from 'react-router-dom';
 import GoogleLoginButton from './GoogleLoginButton';
 

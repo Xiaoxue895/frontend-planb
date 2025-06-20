@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, MouseEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
-import { thunkLogout } from './authSlice';
-import { AppDispatch, RootState } from '../../app/store';
+import { thunkLogout } from '../authSlice';
+import { AppDispatch, RootState } from '../../../app/store';
 
 function ProfileButton() {
   const dispatch: AppDispatch = useDispatch();

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ProfileButton from '@/features/auth/ProfileButton';
+import ProfileButton from '@/features/auth/components/ProfileButton';
 
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState('home');
