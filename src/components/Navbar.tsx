@@ -34,6 +34,13 @@ const Navbar = () => {
               Home
             </a>
             <a 
+              href="/jobs" 
+              className={`tab-link ${activeTab === 'jobs' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'} px-3 py-2 text-sm font-medium transition-colors`}
+              onClick={() => handleTabClick('jobs')}
+            >
+              Jobs
+            </a>
+            <a 
               href="/download" 
               className={`tab-link ${activeTab === 'download' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'} px-3 py-2 text-sm font-medium transition-colors`}
               onClick={() => handleTabClick('download')}
