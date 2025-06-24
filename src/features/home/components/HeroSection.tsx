@@ -3,11 +3,30 @@ import React, { useState } from 'react';
 const HeroSection = () => {
   const [email, setEmail] = useState('');
 
-  const handleGetStarted = (e: React.FormEvent) => {
+  const handleGetStarted = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Email submitted:', email);
-    // Handle email submission logic here
-    window.location.href = '/webapp';
+    
+    if (!email) return;
+
+    // Submit email to waitlist
+    const form = new FormData();
+    form.append('entry.1305314608', email);   // Replace with actual entry ID
+
+    try {
+      await fetch(
+        'https://docs.google.com/forms/d/e/1FAIpQLSfKUxYaAAkRuK-DgvKI1W_IVo1OVGgZ8Fm9I6-2mEvEkO2fKw/formResponse',
+        {
+          method: 'POST',
+          mode: 'no-cors',
+          body: form,
+        }
+      );
+    } catch (error) {
+      console.error('Error submitting email:', error);
+    }
+
+    // Redirect to onboarding flow
+    window.location.href = '/onboarding';
   };
 
   return (

@@ -3,7 +3,6 @@ import Navbar from '../components/Navbar';
 import HeroSection from '../features/home/components/HeroSection';
 import HowItWorksSection from '../features/home/components/HowItWorksSection';
 import TestimonialsSection from '../features/home/components/TestimonialsSection';
-import DownloadSection from '../components/DownloadSection';
 import Footer from '../components/Footer';
 
 const HomePage = () => {
@@ -14,7 +13,6 @@ const HomePage = () => {
         <HeroSection />
         <HowItWorksSection />
         <TestimonialsSection />
-        <DownloadSection />
       </main>
       <Footer />
       

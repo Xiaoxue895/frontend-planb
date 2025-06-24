@@ -6,12 +6,6 @@ const Navbar = () => {
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
-    
-    // Scroll to section or handle navigation
-    if (tab === 'download') {
-      const downloadSection = document.getElementById('download');
-      downloadSection?.scrollIntoView({ behavior: 'smooth' });
-    }
   };
 
   return (
@@ -33,14 +27,14 @@ const Navbar = () => {
           {/* Navigation */}
           <nav className="hidden md:flex space-x-8">
             <a 
-              href="#home" 
+              href="/" 
               className={`tab-link ${activeTab === 'home' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'} px-3 py-2 text-sm font-medium transition-colors`}
               onClick={() => handleTabClick('home')}
             >
               Home
             </a>
             <a 
-              href="#download" 
+              href="/download" 
               className={`tab-link ${activeTab === 'download' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'} px-3 py-2 text-sm font-medium transition-colors`}
               onClick={() => handleTabClick('download')}
             >
