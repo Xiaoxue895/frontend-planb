@@ -10,6 +10,7 @@ import SignupForm from "./features/auth/components/SignupForm";
 import JobListPage from "./pages/JobListPage"
 import JobDetailPage from "./pages/JobDetailPage"
 import ManageResumesPage from "./pages/ManageResumePage"
+import AdminDashboard from "./pages/AdminDashboard"
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/jobs" element={<JobListPage />} />
           <Route path="/jobs/:id" element={<JobDetailPage />} />
           <Route path="/resumes" element={<ManageResumesPage />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
         </Routes>
       </BrowserRouter>

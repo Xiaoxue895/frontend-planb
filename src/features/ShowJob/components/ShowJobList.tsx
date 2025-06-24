@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import AuthModal from '../../auth/components/AuthModal';
 import SuccessModal from '../../auth/components/SuccessModal';
+import { isAuthSkipEnabled } from '@/utils/config';
 
 const ShowJobList: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -29,6 +30,16 @@ const ShowJobList: React.FC = () => {
       } else {
         // Handle chat logic
         console.log('Starting chat...');
+      }
+    } else if (isAuthSkipEnabled()) {
+      // Development mode - skip auth and proceed directly
+      console.log(`🧪 Testing mode: Skipping auth for ${action} action`);
+      if (action === 'apply') {
+        console.log('Simulating job application...');
+        alert('🧪 Testing Mode: Job application submitted successfully!');
+      } else {
+        console.log('Simulating chat start...');
+        alert('🧪 Testing Mode: Chat started with funder!');
       }
     } else {
       // User not logged in, show auth modal
@@ -160,14 +171,35 @@ const ShowJobList: React.FC = () => {
             <p className="text-gray-600">Be one of the first 10 to apply</p>
           </div>
           
-          {/* Registration Tip */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center space-x-3">
-            <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-              <span className="text-yellow-600 font-bold text-sm">!</span>
+          {/* Registration Tip / Development Mode Indicator */}
+          <div className={`rounded-lg p-4 flex items-center space-x-3 ${
+            isAuthSkipEnabled() 
+              ? 'bg-purple-50 border border-purple-200' 
+              : 'bg-yellow-50 border border-yellow-200'
+          }`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              isAuthSkipEnabled()
+                ? 'bg-purple-100'
+                : 'bg-yellow-100'
+            }`}>
+              <span className={`font-bold text-sm ${
+                isAuthSkipEnabled()
+                  ? 'text-purple-600'
+                  : 'text-yellow-600'
+              }`}>
+                {isAuthSkipEnabled() ? '🧪' : '!'}
+              </span>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-800">Tips</p>
-              <p className="text-xs text-gray-600">Register with US to unlock more features!</p>
+              <p className="text-sm font-medium text-gray-800">
+                {isAuthSkipEnabled() ? 'Testing Mode' : 'Tips'}
+              </p>
+              <p className="text-xs text-gray-600">
+                {isAuthSkipEnabled() 
+                  ? 'Auth skip enabled - buttons work without login!' 
+                  : 'Register with US to unlock more features!'
+                }
+              </p>
             </div>
           </div>
         </div>

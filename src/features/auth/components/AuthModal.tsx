@@ -1,7 +1,8 @@
 import React, { useState, FormEvent } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/reduxHooks';
-import { thunkLogin, thunkSignup, clearErrors } from '../authSlice';
+import { thunkLogin, thunkSignup, skipAuthForTesting, clearErrors } from '../authSlice';
 import GoogleLoginButton from './GoogleLoginButton';
+import { isAuthSkipEnabled } from '@/utils/config';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -41,6 +42,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, defau
       }));
       if (thunkSignup.fulfilled.match(result)) {
         onSuccess?.();
+        onClose();
       }
     } else {
       const result = await dispatch(thunkLogin({
@@ -49,6 +51,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, defau
       }));
       if (thunkLogin.fulfilled.match(result)) {
         onSuccess?.();
+        onClose();
       }
     }
   };
@@ -56,6 +59,27 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, defau
   const toggleMode = () => {
     setMode(mode === 'login' ? 'signup' : 'login');
     dispatch(clearErrors());
+  };
+
+  const handleSkipAuth = async () => {
+    // For testing only - simulate successful auth without actual login
+    if (isAuthSkipEnabled()) {
+      const result = await dispatch(skipAuthForTesting());
+      if (skipAuthForTesting.fulfilled.match(result)) {
+        onSuccess?.();
+        onClose();
+      }
+    }
+  };
+
+  const handleFillTestCredentials = () => {
+    if (isAuthSkipEnabled()) {
+      setFormData(prev => ({
+        ...prev,
+        email: 'user@jobhatch.com',
+        password: 'user123'
+      }));
+    }
   };
 
   if (!isOpen) return null;
@@ -119,6 +143,30 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, defau
             <p className="text-gray-600 mb-4 text-sm">
               Sign up or log in to view your job opportunities!
             </p>
+
+            {/* Testing Mode Notice */}
+            {isAuthSkipEnabled() && (
+              <div className="bg-purple-100 border border-purple-300 rounded-lg p-3 mb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <i className="fas fa-flask text-purple-600"></i>
+                    <span className="text-purple-800 text-xs font-medium">
+                      Testing Mode Active
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleFillTestCredentials}
+                    className="text-purple-700 hover:text-purple-900 text-xs underline"
+                  >
+                    Fill Test Data
+                  </button>
+                </div>
+                <p className="text-purple-700 text-xs mt-1">
+                  Use: user@jobhatch.com / user123
+                </p>
+              </div>
+            )}
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-3">
@@ -226,6 +274,22 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, defau
             <div className="mt-2">
               <GoogleLoginButton />
             </div>
+
+            {/* Development/Testing Skip Button */}
+            {isAuthSkipEnabled() && (
+              <div className="mt-3 pt-3 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={handleSkipAuth}
+                  className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition-colors text-sm"
+                >
+                  🧪 Skip Auth (Testing Only)
+                </button>
+                <p className="text-xs text-gray-500 mt-1">
+                  Development mode - This will not work in production
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
