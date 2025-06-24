@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
-import ProfileButton from '@/features/auth/components/ProfileButton';
 
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState('home');
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
+    
+    // Scroll to section or handle navigation
+    if (tab === 'download') {
+      const downloadSection = document.getElementById('download');
+      downloadSection?.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -27,21 +32,14 @@ const Navbar = () => {
           {/* Navigation */}
           <nav className="hidden md:flex space-x-8">
             <a 
-              href="/" 
+              href="#home" 
               className={`tab-link ${activeTab === 'home' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'} px-3 py-2 text-sm font-medium transition-colors`}
               onClick={() => handleTabClick('home')}
             >
               Home
             </a>
             <a 
-              href="/jobs" 
-              className={`tab-link ${activeTab === 'jobs' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'} px-3 py-2 text-sm font-medium transition-colors`}
-              onClick={() => handleTabClick('jobs')}
-            >
-              Jobs
-            </a>
-            <a 
-              href="/download" 
+              href="#download" 
               className={`tab-link ${activeTab === 'download' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'} px-3 py-2 text-sm font-medium transition-colors`}
               onClick={() => handleTabClick('download')}
             >
@@ -58,19 +56,18 @@ const Navbar = () => {
 
           {/* Auth Buttons */}
           <div className="flex items-center space-x-3">
-            <ProfileButton />
-            {/* <button 
+            <button 
               className="login-btn px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors"
               id="loginBtn"
             >
               Login
-            </button> */}
-            {/* <button 
+            </button>
+            <button 
               className="signup-btn px-4 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-lg transition-colors"
               id="signupBtn"
             >
               Sign Up
-            </button> */}
+            </button>
           </div>
         </div>
       </div>
