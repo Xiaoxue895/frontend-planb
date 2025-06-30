@@ -1,58 +1,84 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
+import React from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useAppSelector } from '@/hooks/reduxHooks';
+import ProfileButton from '@/features/auth/components/ProfileButton';
 
 const CongratulationsPage: React.FC = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const location = useLocation();
+  const user = useAppSelector((state) => state.auth.user);
+  
+  const getActiveTab = () => {
+    const path = location.pathname;
+    if (path === '/') return 'home';
+    if (path === '/jobs') return 'jobs';
+    if (path === '/download') return 'download';
+    return '';
+  };
 
-  const handleContinue = async () => {
-    setIsLoading(true);
-    console.log('Checking onboarding status...'); // Debug log
-    
-    try {
-      // Check if user needs onboarding
-      const onboardingResponse = await fetch('/api/onboarding/status', {
-        method: 'GET',
-        credentials: 'include',
-      });
-      
-      console.log('Onboarding response status:', onboardingResponse.status); // Debug log
-      
-      if (onboardingResponse.ok) {
-        const onboardingData = await onboardingResponse.json();
-        console.log('Onboarding data:', onboardingData); // Debug log
-        
-        if (!onboardingData.onboarding_completed) {
-          // User needs onboarding
-          console.log('Redirecting to onboarding...'); // Debug log
-          navigate('/onboarding');
-        } else {
-          // User has completed onboarding, go to main app
-          console.log('Redirecting to webapp...'); // Debug log
-          navigate('/webapp');
-        }
-      } else {
-        // If we can't check onboarding status, default to onboarding
-        console.log('Failed to check onboarding status, defaulting to onboarding'); // Debug log
-        navigate('/onboarding');
-      }
-    } catch (error) {
-      console.error('Error checking onboarding status:', error);
-      // On error, default to onboarding to be safe
-      navigate('/onboarding');
-    } finally {
-      setIsLoading(false);
-    }
+  const activeTab = getActiveTab();
+
+  const handleContinue = () => {
+    navigate('/onboarding');
   };
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation - Same as Home Page */}
-      <Navbar />
+      {/* Header */}
+      <header className="bg-white sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <img 
+                src="/images/LOGO.jpg" 
+                alt="JobHatch Logo" 
+                className="h-10 w-auto"
+              />
+              <span className="text-xl font-bold text-gray-900" style={{ fontFamily: 'Baloo 2, cursive' }}>
+                JOBHATCH
+              </span>
+            </Link>
+
+            {/* Navigation */}
+            <nav className="hidden md:flex space-x-8">
+              <Link 
+                to="/" 
+                className={`tab-link ${activeTab === 'home' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'} px-3 py-2 text-sm font-medium transition-colors`}
+              >
+                Home
+              </Link>
+              <Link 
+                to="/jobs" 
+                className={`tab-link ${activeTab === 'jobs' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'} px-3 py-2 text-sm font-medium transition-colors`}
+              >
+                Jobs
+              </Link>
+              <Link 
+                to="/download" 
+                className={`tab-link ${activeTab === 'download' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-600 hover:text-blue-500'} px-3 py-2 text-sm font-medium transition-colors`}
+              >
+                Download
+              </Link>
+              <Link 
+                to="/webapp" 
+                className="app-link text-gray-600 hover:text-blue-500 px-3 py-2 text-sm font-medium transition-colors inline-flex items-center space-x-1"
+              >
+                <span>Web App</span>
+                <i className="fas fa-external-link-alt text-xs"></i>
+              </Link>
+            </nav>
+
+            {/* Auth Buttons */}
+            <div className="flex items-center space-x-3">
+              <ProfileButton />
+            </div>
+          </div>
+        </div>
+      </header>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center px-8 py-16 pt-24">
+      <main className="flex-1 flex flex-col items-center justify-center px-8 py-16">
         {/* Party Celebration Icon */}
         <div className="mb-8">
           <img
@@ -74,10 +100,9 @@ const CongratulationsPage: React.FC = () => {
         {/* Continue Button */}
         <button
           onClick={handleContinue}
-          disabled={isLoading}
-          className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-12 rounded-lg transition-colors text-lg mb-16 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-12 rounded-lg transition-colors text-lg mb-16"
         >
-          {isLoading ? 'Loading...' : 'Continue'}
+          Continue
         </button>
 
         {/* Cute Characters */}
