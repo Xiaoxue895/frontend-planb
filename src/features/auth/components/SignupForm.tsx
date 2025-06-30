@@ -44,14 +44,14 @@ function SignupForm() {
     if ('payload' in res && res.meta.requestStatus === 'rejected') {
       setFormErrors(res.payload || { server: 'Signup failed' });
     } else {
-      navigate('/');
+      navigate('/congratulations');
     }
   };
 
   const handleGoogleSignup = async (credential: string) => {
     const resultAction = await dispatch(thunkGoogleLogin(credential));
     if (thunkGoogleLogin.fulfilled.match(resultAction)) {
-      navigate('/');
+      navigate('/congratulations');
     }
   };
 

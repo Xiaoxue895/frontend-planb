@@ -17,7 +17,7 @@ const LoginForm = () => {
     const resultAction = await dispatch(thunkLogin({ email, password }));
 
     if (thunkLogin.fulfilled.match(resultAction)) {
-      navigate('/'); 
+      navigate('/congratulations'); 
     }
   };
 

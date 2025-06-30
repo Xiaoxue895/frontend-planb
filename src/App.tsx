@@ -7,6 +7,7 @@ import OnboardingPage from "./pages/OnboardingPage";
 import WebApp from "./pages/WebApp";
 import LoginForm from "./features/auth/components/LoginForm";
 import SignupForm from "./features/auth/components/SignupForm";
+import CongratulationsPage from "./pages/CongratulationsPage";
 import JobListPage from "./pages/JobListPage"
 import JobDetailPage from "./pages/JobDetailPage"
 import ManageResumesPage from "./pages/ManageResumePage"
@@ -23,6 +24,7 @@ function App() {
           <Route path="/webapp" element={<WebApp />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignupForm />} />
+          <Route path="/congratulations" element={<CongratulationsPage />} />
           <Route path="/jobs" element={<JobListPage />} />
           <Route path="/jobs/:id" element={<JobDetailPage />} />
           <Route path="/resumes" element={<ManageResumesPage />} />
