@@ -11,6 +11,12 @@ import CongratulationsPage from "./pages/CongratulationsPage";
 import JobListPage from "./pages/JobListPage"
 import JobDetailPage from "./pages/JobDetailPage"
 import ManageResumesPage from "./pages/ManageResumePage"
+import ResumeUploadPage from "./pages/ResumeUploadPage";
+import ResumeAnalysisPage from "./pages/ResumeAnalysisPage";
+import PricingPage from "./pages/PricingPage";
+import ProfileCreationPage from "./pages/ProfileCreationPage";
+import JobPreferencesPage from "./pages/JobPreferencesPage";
+import OnboardingCompletePage from "./pages/OnboardingCompletePage";
 
 function App() {
   return (
@@ -21,6 +27,12 @@ function App() {
           <Route path="/download" element={<DownloadPage />} />
           <Route path="/phone-demo" element={<PhoneDemo />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
+          <Route path="/onboarding/upload" element={<ResumeUploadPage />} />
+          <Route path="/onboarding/analyze/:resumeId" element={<ResumeAnalysisPage />} />
+          <Route path="/onboarding/pricing" element={<PricingPage />} />
+          <Route path="/onboarding/profile" element={<ProfileCreationPage />} />
+          <Route path="/onboarding/preferences" element={<JobPreferencesPage />} />
+          <Route path="/onboarding/complete" element={<OnboardingCompletePage />} />
           <Route path="/webapp" element={<WebApp />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignupForm />} />

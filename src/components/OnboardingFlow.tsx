@@ -122,7 +122,7 @@ const OnboardingFlow: React.FC = () => {
         throw new Error('Failed to save user type');
       }
 
-      // Save preferences
+      // Save initial interests
       const preferencesResponse = await fetch('/api/onboarding/preferences', {
         method: 'POST',
         headers: {
@@ -139,19 +139,8 @@ const OnboardingFlow: React.FC = () => {
         throw new Error('Failed to save preferences');
       }
 
-      // Complete onboarding
-      const completeResponse = await fetch('/api/onboarding/complete', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
-
-      if (completeResponse.ok) {
-        const data = await completeResponse.json();
-        navigate(data.redirect_url || '/webapp');
-      }
+      // Navigate to the next step in the onboarding flow
+      navigate('/onboarding/upload');
     } catch (error) {
       console.error('Onboarding error:', error);
     } finally {
