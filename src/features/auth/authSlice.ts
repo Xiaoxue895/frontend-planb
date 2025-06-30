@@ -18,93 +18,149 @@ const initialState: AuthState = {
   errors: null,
 };
 
+// Helper function to get CSRF token from cookies
+const getCSRFTokenFromCookie = (): string | null => {
+  const cookies = document.cookie.split(';');
+  for (let cookie of cookies) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === 'csrf_token') {
+      return value;
+    }
+  }
+  return null;
+};
+
+// Helper function to ensure CSRF token is available
+const ensureCSRFToken = async (): Promise<void> => {
+  const token = getCSRFTokenFromCookie();
+  if (!token) {
+    // Get CSRF token by making a request that will set the cookie
+    await fetch('/api/auth/csrf/restore', {
+      credentials: 'include',
+    });
+  }
+};
+
 export const thunkLogin = createAsyncThunk<
   User,
   { email: string; password: string },
   { rejectValue: Record<string, string> }
 >('auth/login', async (credentials, { rejectWithValue }) => {
-  const response = await fetch('/api/auth/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include', 
-    body: JSON.stringify(credentials),
-  });
+  try {
+    // Ensure CSRF token is available
+    await ensureCSRFToken();
+    
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', 
+      body: JSON.stringify(credentials),
+    });
 
-  if (response.ok) {
-    return await response.json();
-  } else if (response.status < 500) {
-    const data = await response.json();
-    return rejectWithValue(data);
-  } else {
-    return rejectWithValue({ server: 'Something went wrong. Please try again' });
+    if (response.ok) {
+      return await response.json();
+    } else if (response.status < 500) {
+      const data = await response.json();
+      return rejectWithValue(data);
+    } else {
+      return rejectWithValue({ server: 'Something went wrong. Please try again' });
+    }
+  } catch (error) {
+    return rejectWithValue({ server: 'Network error. Please try again.' });
   }
 });
 
 export const thunkGoogleLogin = createAsyncThunk<
-  User,
+  { user: User; token: string },
   string,
   { rejectValue: Record<string, string> }
 >('auth/googleLogin', async (idToken, { rejectWithValue }) => {
-  const response = await fetch('/api/auth/google', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',  
-    body: JSON.stringify({ idToken }),
-  });
+  try {
+    const response = await fetch('/api/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',  
+      body: JSON.stringify({ idToken }),
+    });
 
-  if (response.ok) {
-    const data = await response.json();
-    return data.user; 
-  } else if (response.status < 500) {
-    const data = await response.json();
-    return rejectWithValue(data);
-  } else {
-    return rejectWithValue({ server: 'Google login failed. Please try again.' });
+    if (response.ok) {
+      const data = await response.json();
+      // Store the JWT token if provided
+      if (data.token) {
+        localStorage.setItem('jwt_token', data.token);
+      }
+      return data; 
+    } else if (response.status < 500) {
+      const data = await response.json();
+      return rejectWithValue(data);
+    } else {
+      return rejectWithValue({ server: 'Google login failed. Please try again.' });
+    }
+  } catch (error) {
+    return rejectWithValue({ server: 'Network error. Please try again.' });
   }
 });
-
 
 export const thunkSignup = createAsyncThunk<
   User,
   { email: string; username: string; password: string },
   { rejectValue: Record<string, string> }
 >('auth/signup', async (userData, { rejectWithValue }) => {
-  const response = await fetch('/api/auth/signup', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',  
-    body: JSON.stringify(userData),
-  });
+  try {
+    // Ensure CSRF token is available
+    await ensureCSRFToken();
+    
+    const response = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',  
+      body: JSON.stringify(userData),
+    });
 
-  if (response.ok) {
-    return await response.json();
-  } else if (response.status < 500) {
-    const data = await response.json();
-    return rejectWithValue(data);
-  } else {
-    return rejectWithValue({ server: 'Something went wrong. Please try again' });
+    if (response.ok) {
+      return await response.json();
+    } else if (response.status < 500) {
+      const data = await response.json();
+      return rejectWithValue(data);
+    } else {
+      return rejectWithValue({ server: 'Something went wrong. Please try again' });
+    }
+  } catch (error) {
+    return rejectWithValue({ server: 'Network error. Please try again.' });
   }
 });
 
 export const thunkAuthenticate = createAsyncThunk<User | null>(
   'auth/authenticate',
   async () => {
-    const response = await fetch('/api/auth/', {
-      credentials: 'include',  
-    });
-    if (response.ok) {
-      const data = await response.json();
-      return data.errors ? null : data;
+    try {
+      const response = await fetch('/api/auth/', {
+        credentials: 'include',  
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return data.errors ? null : data;
+      }
+      return null;
+    } catch (error) {
+      return null;
     }
-    return null;
   }
 );
 
 export const thunkLogout = createAsyncThunk('auth/logout', async () => {
-  await fetch('/api/auth/logout', {
-    credentials: 'include',  
-  });
-  return null;
+  try {
+    await fetch('/api/auth/logout', {
+      credentials: 'include',  
+    });
+    // Clear any stored JWT token
+    localStorage.removeItem('jwt_token');
+    return null;
+  } catch (error) {
+    // Even if logout fails on server, clear local state
+    localStorage.removeItem('jwt_token');
+    return null;
+  }
 });
 
 const authSlice = createSlice({
@@ -163,7 +219,7 @@ const authSlice = createSlice({
 
       .addCase(thunkGoogleLogin.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.user = action.payload;
+        state.user = action.payload.user;
       })
       
       .addCase(thunkGoogleLogin.rejected, (state, action) => {
