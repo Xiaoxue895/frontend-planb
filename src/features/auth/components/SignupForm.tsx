@@ -44,6 +44,24 @@ function SignupForm() {
     if ('payload' in res && res.meta.requestStatus === 'rejected') {
       setFormErrors(res.payload || { server: 'Signup failed' });
     } else {
+      // Check if user needs onboarding
+      try {
+        const onboardingResponse = await fetch('/api/onboarding/status', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        
+        if (onboardingResponse.ok) {
+          const onboardingData = await onboardingResponse.json();
+          if (!onboardingData.onboarding_completed) {
+            navigate('/onboarding');
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+      }
+      
       navigate('/congratulations');
     }
   };
@@ -51,6 +69,24 @@ function SignupForm() {
   const handleGoogleSignup = async (credential: string) => {
     const resultAction = await dispatch(thunkGoogleLogin(credential));
     if (thunkGoogleLogin.fulfilled.match(resultAction)) {
+      // Check if user needs onboarding
+      try {
+        const onboardingResponse = await fetch('/api/onboarding/status', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        
+        if (onboardingResponse.ok) {
+          const onboardingData = await onboardingResponse.json();
+          if (!onboardingData.onboarding_completed) {
+            navigate('/onboarding');
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+      }
+      
       navigate('/congratulations');
     }
   };

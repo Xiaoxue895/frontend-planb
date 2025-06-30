@@ -17,6 +17,24 @@ const LoginForm = () => {
     const resultAction = await dispatch(thunkLogin({ email, password }));
 
     if (thunkLogin.fulfilled.match(resultAction)) {
+      // Check if user needs onboarding
+      try {
+        const onboardingResponse = await fetch('/api/onboarding/status', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        
+        if (onboardingResponse.ok) {
+          const onboardingData = await onboardingResponse.json();
+          if (!onboardingData.onboarding_completed) {
+            navigate('/onboarding');
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+      }
+      
       navigate('/congratulations'); 
     }
   };

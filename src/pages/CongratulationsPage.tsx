@@ -1,44 +1,58 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAppSelector } from '@/hooks/reduxHooks';
+import Navbar from '../components/Navbar';
 
 const CongratulationsPage: React.FC = () => {
   const navigate = useNavigate();
-  const user = useAppSelector((state) => state.auth.user);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleContinue = () => {
-    navigate('/');
+  const handleContinue = async () => {
+    setIsLoading(true);
+    console.log('Checking onboarding status...'); // Debug log
+    
+    try {
+      // Check if user needs onboarding
+      const onboardingResponse = await fetch('/api/onboarding/status', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      
+      console.log('Onboarding response status:', onboardingResponse.status); // Debug log
+      
+      if (onboardingResponse.ok) {
+        const onboardingData = await onboardingResponse.json();
+        console.log('Onboarding data:', onboardingData); // Debug log
+        
+        if (!onboardingData.onboarding_completed) {
+          // User needs onboarding
+          console.log('Redirecting to onboarding...'); // Debug log
+          navigate('/onboarding');
+        } else {
+          // User has completed onboarding, go to main app
+          console.log('Redirecting to webapp...'); // Debug log
+          navigate('/webapp');
+        }
+      } else {
+        // If we can't check onboarding status, default to onboarding
+        console.log('Failed to check onboarding status, defaulting to onboarding'); // Debug log
+        navigate('/onboarding');
+      }
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      // On error, default to onboarding to be safe
+      navigate('/onboarding');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="flex items-center justify-between px-8 py-4 bg-white">
-        <div className="flex items-center space-x-3">
-          <img 
-            src="/images/LOGO.jpg" 
-            alt="JobHatch Logo" 
-            className="h-8 w-auto"
-          />
-          <span className="text-xl font-bold text-gray-900">JOBHATCH</span>
-        </div>
-        
-        <nav className="flex items-center space-x-8">
-          <Link to="/" className="text-gray-600 hover:text-gray-900">Home</Link>
-          <Link to="/webapp" className="text-gray-600 hover:text-gray-900">About</Link>
-          <Link to="/download" className="text-gray-600 hover:text-gray-900">Download</Link>
-          <div className="flex items-center space-x-2 bg-gray-100 rounded-full px-4 py-2">
-            <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-            <span className="text-sm text-gray-700">{user?.username || 'Mia Yue'}</span>
-            <svg className="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </div>
-        </nav>
-      </header>
+      {/* Navigation - Same as Home Page */}
+      <Navbar />
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center px-8 py-16">
+      <main className="flex-1 flex flex-col items-center justify-center px-8 py-16 pt-24">
         {/* Party Celebration Icon */}
         <div className="mb-8">
           <img
@@ -60,9 +74,10 @@ const CongratulationsPage: React.FC = () => {
         {/* Continue Button */}
         <button
           onClick={handleContinue}
-          className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-12 rounded-lg transition-colors text-lg mb-16"
+          disabled={isLoading}
+          className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-12 rounded-lg transition-colors text-lg mb-16 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Continue
+          {isLoading ? 'Loading...' : 'Continue'}
         </button>
 
         {/* Cute Characters */}
