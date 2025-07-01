@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 
 const ResumeUploadPage: React.FC = () => {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [error, setError] = useState<string>('');
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setUploadedFile(file);
+      setError(''); // Clear any previous errors
     }
   };
 
@@ -17,7 +20,7 @@ const ResumeUploadPage: React.FC = () => {
     if (!uploadedFile) {
       const input = document.createElement('input');
       input.type = 'file';
-      input.accept = '.pdf,.doc,.docx';
+      input.accept = '.pdf,.doc,.docx,.rtf,.wp,.txt';
       input.onchange = (event) => {
         const file = (event.target as HTMLInputElement).files?.[0];
         if (file) {
@@ -33,27 +36,58 @@ const ResumeUploadPage: React.FC = () => {
 
   const uploadFile = async (file: File) => {
     setIsUploading(true);
+    setError('');
+    
     try {
+      console.log('Starting file upload:', file.name);
+      
+      // Check file size (limit to 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        throw new Error('File size must be less than 10MB');
+      }
+
+      // Check file type
+      const allowedTypes = ['pdf', 'doc', 'docx', 'rtf', 'wp', 'txt'];
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      if (!fileExtension || !allowedTypes.includes(fileExtension)) {
+        throw new Error(`File type not supported. Please use: ${allowedTypes.join(', ')}`);
+      }
+
       const formData = new FormData();
       formData.append('file', file);
       formData.append('title', file.name);
 
-      const response = await fetch('/api/resumes', {
+      console.log('Making API request to', API_ENDPOINTS.resumes);
+      
+      const response = await fetch(API_ENDPOINTS.resumes, {
         method: 'POST',
         credentials: 'include',
         body: formData,
       });
 
+      console.log('API response status:', response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log('Upload successful:', data);
+        
+        // Show success message briefly
+        alert(`Resume uploaded successfully! ${data.storage_type === 'local' ? '(Stored locally - AWS not configured)' : ''}`);
+        
         // Navigate to analysis page with resume ID
         navigate(`/onboarding/analyze/${data.resume.id}`);
       } else {
-        throw new Error('Upload failed');
+        const errorData = await response.json();
+        console.error('Upload failed:', errorData);
+        throw new Error(errorData.error || 'Upload failed');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload error:', error);
-      alert('Failed to upload resume. Please try again.');
+      const errorMessage = error.message || 'Failed to upload resume. Please try again.';
+      setError(errorMessage);
+      
+      // Show error in alert for immediate feedback
+      alert(`Upload failed: ${errorMessage}`);
     } finally {
       setIsUploading(false);
     }
@@ -160,13 +194,21 @@ const ResumeUploadPage: React.FC = () => {
             </div>
 
             <p className="text-gray-600 text-sm mb-8">
-              Click the button below to upload your resume as a .pdf, .doc, .docx, .rtf, .wp or .txt file
+              Click the button below to upload your resume as a .pdf, .doc, .docx, .rtf, .wp or .txt file (max 10MB)
             </p>
 
             {uploadedFile && (
               <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                 <p className="text-green-700 text-sm">
-                  ✓ {uploadedFile.name} selected
+                  ✓ {uploadedFile.name} selected ({(uploadedFile.size / 1024 / 1024).toFixed(2)} MB)
+                </p>
+              </div>
+            )}
+
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-700 text-sm">
+                  ❌ {error}
                 </p>
               </div>
             )}
@@ -178,6 +220,14 @@ const ResumeUploadPage: React.FC = () => {
             >
               {isUploading ? 'Uploading...' : 'Upload Resume'}
             </button>
+
+            {/* Debug info for development */}
+            {process.env.NODE_ENV === 'development' && (
+              <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
+                <p>Debug: API endpoint {API_ENDPOINTS.resumes}</p>
+                <p>Accepted types: PDF, DOC, DOCX, RTF, WP, TXT</p>
+              </div>
+            )}
           </div>
 
           <button

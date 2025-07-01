@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
 import WaitlistEmailForm from './WaitlistEmailForm';
 import EnhancedWaitlistForm from './EnhancedWaitlistForm';
 
@@ -109,7 +110,7 @@ const OnboardingFlow: React.FC = () => {
     setIsLoading(true);
     try {
       // Save user type
-      const userTypeResponse = await fetch('/api/onboarding/user-type', {
+      const userTypeResponse = await fetch(`${API_ENDPOINTS.onboarding}/user-type`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +124,7 @@ const OnboardingFlow: React.FC = () => {
       }
 
       // Save initial interests
-      const preferencesResponse = await fetch('/api/onboarding/preferences', {
+      const preferencesResponse = await fetch(`${API_ENDPOINTS.onboarding}/preferences`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -171,8 +172,8 @@ const OnboardingFlow: React.FC = () => {
               </svg>
             </div>
           </div>
-        </div>
-      </div>
+                </div>
+              </div>
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-16">
@@ -201,15 +202,15 @@ const OnboardingFlow: React.FC = () => {
                       {selectedUserType === userType.id && (
                         <div className="w-2 h-2 bg-white rounded-full mx-auto mt-0.5"></div>
                       )}
-                    </div>
+                </div>
                     <h3 className="text-lg font-semibold text-gray-700">{userType.title}</h3>
-                  </div>
+              </div>
 
                   <div className="space-y-6">
                     <div>
                       <h4 className="text-xl font-bold text-orange-500 mb-2">{userType.subtitle}</h4>
                       <p className="text-sm text-gray-600">{userType.description}</p>
-                    </div>
+                </div>
 
                     <div>
                       <h4 className="text-xl font-bold text-orange-500 mb-2">
@@ -224,17 +225,17 @@ const OnboardingFlow: React.FC = () => {
                   </div>
                 </div>
               ))}
-            </div>
+              </div>
 
             <div className="mt-16 flex justify-center">
-              <button 
+                <button
                 onClick={() => selectedUserType && setCurrentStep('interests')}
                 disabled={!selectedUserType}
                 className="bg-orange-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+                >
                 Save & Continue
-              </button>
-            </div>
+                </button>
+              </div>
 
             <div className="mt-8 text-center">
               <button className="text-gray-500 hover:text-gray-700 underline">
@@ -243,7 +244,7 @@ const OnboardingFlow: React.FC = () => {
               <p className="text-xs text-gray-400 mt-2">
                 You can always change your role later in your account settings
               </p>
-            </div>
+              </div>
           </div>
         )}
 
