@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 
 const HeroSection = () => {
   const [email, setEmail] = useState('');
+  const [showHatchAnim, setShowHatchAnim] = useState(false);
+  const [showXpAnim, setShowXpAnim] = useState(false);
 
   const handleGetStarted = (e: React.FormEvent) => {
     e.preventDefault();
@@ -10,78 +12,42 @@ const HeroSection = () => {
     window.location.href = '/webapp';
   };
 
+  const handleJoinWaitlist = () => {
+    console.log('Join Waitlist button clicked');
+    // Handle waitlist signup logic here
+    window.location.href = '/waitlist';
+  };
+
+  const handleChickClick = () => {
+    setShowHatchAnim(true);
+    setShowXpAnim(true);
+    setTimeout(() => {
+      setShowHatchAnim(false);
+      setShowXpAnim(false);
+    }, 2000);
+  };
+
   return (
-    <section className="relative min-h-screen flex items-center py-20" style={{ backgroundColor: '#eafbff', fontFamily: 'Inter, sans-serif' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="relative">
-          
-          {/* Left Side Feature Boxes */}
-          <div className="absolute left-0 top-24 space-y-6 hidden lg:block">
-            {/* No more ghosting */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100 w-64 transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-2">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                  <i className="fas fa-envelope text-orange-500"></i>
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900 text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>No more ghosting</div>
-                  <div className="text-xs text-gray-600" style={{ fontFamily: 'Inter, sans-serif' }}>Talk directly with Hiring Manager</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Mock Interview */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100 w-64 mt-48 transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-2">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full overflow-hidden">
-                  <img src="/images/avatar-1.svg" alt="Interviewer" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-gray-900 text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>Mock Interview</div>
-                  <div className="text-xs text-gray-600 mb-2" style={{ fontFamily: 'Inter, sans-serif' }}>Today at 12:00 PM</div>
-                  <button className="bg-pink-500 hover:bg-pink-600 text-white text-xs font-semibold py-2 px-4 rounded-full transition-colors shadow-md" style={{ fontFamily: 'Inter, sans-serif' }}>
-                    Join Now
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Side Feature Box */}
-          <div className="absolute right-0 top-32 hidden lg:block">
-            {/* One click to apply */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100 w-64 transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-2">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                  <i className="fas fa-check text-green-500"></i>
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900 text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>One click to apply</div>
-                  <div className="text-xs text-gray-600" style={{ fontFamily: 'Inter, sans-serif' }}>No more filling out applications.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Center - Main Content */}
-          <div className="text-center">
-            {/* Main Title */}
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-8" style={{ fontFamily: 'Inter, sans-serif' }}>
-              <span className="text-orange-500">Find your </span>
-              <span className="text-blue-600">first</span>
-              <span className="text-orange-500"> job within</span>
+    <section className="bg-gradient-to-b from-blue-50 to-white py-20 relative overflow-hidden" style={{ fontFamily: 'Inter, sans-serif' }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <div className="space-y-8 fade-in-up relative z-20">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+              <span className="text-orange-500">Hatch</span>{' '}
+              <span className="text-blue-600">your</span>{' '}
+              <span className="text-orange-500">career</span>
               <br />
-              <span className="text-blue-600">one week</span>
+              <span className="text-blue-600">Together</span>
             </h1>
-
-            {/* Subtitle */}
-            <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto" style={{ fontFamily: 'Inter, sans-serif' }}>
-              Enter your email to connect with <span className="font-semibold">500+</span> startups and launch your <span className="font-semibold">first</span> job.
+            
+            <p className="text-xl text-gray-600 leading-relaxed max-w-xl">
+              Level up your career quest! 🐣 Team up, unlock daily wins, and hatch your dream job—no more solo grinding.
             </p>
 
             {/* Email Signup Form */}
-            <form onSubmit={handleGetStarted} className="mb-16">
-              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center max-w-lg mx-auto">
+            <form onSubmit={handleGetStarted} className="mb-8">
+              <div className="flex flex-col sm:flex-row gap-3 justify-start items-center max-w-lg">
                 <input
                   type="email"
                   value={email}
@@ -93,76 +59,117 @@ const HeroSection = () => {
                 />
                 <button
                   type="submit"
-                  className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 px-8 rounded-full transition-colors w-full sm:w-auto text-lg shadow-lg"
+                  className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 px-8 rounded-full transition-colors w-full sm:w-auto text-lg shadow-lg hover:scale-105 transform transition-all"
                   style={{ fontFamily: 'Inter, sans-serif' }}
                 >
-                  Get started
+                  Get Started!
                 </button>
               </div>
             </form>
 
-            {/* Character Image at Bottom */}
-            <div className="flex justify-center">
-              <img 
-                src="/images/ChickenFriends1.png" 
-                alt="JobHatch Characters" 
-                className="w-96 h-auto max-w-full"
-              />
+            <div className="flex flex-col sm:flex-row gap-4 relative z-10">
+              <button 
+                onClick={handleJoinWaitlist}
+                className="bg-white border-2 border-orange-500 text-orange-500 hover:bg-orange-50 font-semibold py-4 px-8 rounded-full transition-colors w-full sm:w-auto text-lg shadow-lg hover:scale-105 transform transition-all"
+                style={{ fontFamily: 'Inter, sans-serif' }}
+              >
+                Join Our Waitlist Now
+              </button>
+            </div>
+
+            {/* Users Count */}
+            <div className="flex items-center gap-4 pt-4">
+              <div className="flex -space-x-2">
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 border-2 border-white flex items-center justify-center text-white font-semibold"
+                  >
+                    {String.fromCharCode(65 + i - 1)}
+                  </div>
+                ))}
+              </div>
+              <p className="text-gray-600 font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>Join 1,200+ career builders</p>
             </div>
           </div>
 
-          {/* Mobile Feature Boxes */}
-          <div className="lg:hidden space-y-4 mt-8">
-            {/* No more ghosting */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100 max-w-xs mx-auto transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-2">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                  <i className="fas fa-envelope text-orange-500"></i>
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900 text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>No more ghosting</div>
-                  <div className="text-xs text-gray-600" style={{ fontFamily: 'Inter, sans-serif' }}>Talk directly with Hiring Manager</div>
+          {/* Right Content - Hero Image */}
+          <div className="relative flex justify-center lg:justify-end">
+            <div className="relative w-80 h-80 lg:w-96 lg:h-96">
+              {/* Main Character */}
+              <div 
+                className="relative w-full h-full cursor-pointer hover:scale-105 transition-transform duration-300 animate-bounce"
+                onClick={handleChickClick}
+                style={{ animation: 'bounce 3s ease-in-out infinite' }}
+              >
+                <img
+                  src="/images/homepage-chick-offer.png"
+                  alt="Career Pet Chick"
+                  className="w-full h-full object-contain"
+                />
+                
+                {/* Hatch Animation Overlay */}
+                {showHatchAnim && (
+                  <div className="absolute inset-0 z-10">
+                    <img
+                      src="/images/flychick.gif"
+                      alt="Hatch Animation"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Feature Bubbles */}
+              <div className="absolute top-4 right-4 w-56 bg-white rounded-xl p-4 shadow-lg border border-gray-100 animate-pulse">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <i className="fas fa-file-alt text-orange-600"></i>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>Resume Updated</p>
+                    <p className="text-xs text-gray-500" style={{ fontFamily: 'Inter, sans-serif' }}>+25 XP</p>
+                    {showXpAnim && (
+                      <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-green-500 font-bold animate-bounce">
+                        +25 XP
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* One click to apply */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100 max-w-xs mx-auto transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-2">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                  <i className="fas fa-check text-green-500"></i>
-                </div>
-                <div>
-                  <div className="font-semibold text-gray-900 text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>One click to apply</div>
-                  <div className="text-xs text-gray-600" style={{ fontFamily: 'Inter, sans-serif' }}>No more filling out applications.</div>
+              <div className="absolute bottom-16 left-4 w-56 bg-white rounded-xl p-4 shadow-lg border border-gray-100 animate-pulse" style={{ animationDelay: '1s' }}>
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <i className="fas fa-users text-blue-600"></i>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>Buddy Matched!</p>
+                    <p className="text-xs text-gray-500" style={{ fontFamily: 'Inter, sans-serif' }}>Meet your accountability partner</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Mock Interview */}
-            <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100 max-w-xs mx-auto transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:-translate-y-2">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full overflow-hidden">
-                  <img src="/images/avatar-1.svg" alt="Interviewer" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-gray-900 text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>Mock Interview</div>
-                  <div className="text-xs text-gray-600 mb-2" style={{ fontFamily: 'Inter, sans-serif' }}>Today at 12:00 PM</div>
-                  <button className="bg-pink-500 hover:bg-pink-600 text-white text-xs font-semibold py-2 px-4 rounded-full transition-colors shadow-md" style={{ fontFamily: 'Inter, sans-serif' }}>
-                    Join Now
-                  </button>
+              <div className="absolute bottom-4 right-8 w-56 bg-white rounded-xl p-4 shadow-lg border border-gray-100 animate-pulse" style={{ animationDelay: '2s' }}>
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i className="fas fa-briefcase text-green-600"></i>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm" style={{ fontFamily: 'Inter, sans-serif' }}>Job Fair Attended</p>
+                    <p className="text-xs text-gray-500" style={{ fontFamily: 'Inter, sans-serif' }}>3 new connections</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
-      {/* Smooth Continuous Bottom Curve */}
+      {/* Bottom Curve */}
       <div className="absolute bottom-0 left-0 w-full">
         <svg viewBox="0 0 1440 150" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-          <path d="M0,80 Q360,40 720,80 T1440,80 V150 H0 V80 Z" fill="white"/>
+          <path d="M0 50C240 150 1200 0 1440 50V150H0V50Z" fill="white"/>
         </svg>
       </div>
     </section>
