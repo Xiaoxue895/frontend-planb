@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import API_BASE_URL from '../../config/api';
 
 interface User {
   id: number;
@@ -35,7 +36,7 @@ const ensureCSRFToken = async (): Promise<void> => {
   const token = getCSRFTokenFromCookie();
   if (!token) {
     // Get CSRF token by making a request that will set the cookie
-    await fetch('/api/auth/csrf/restore', {
+    await fetch(`${API_BASE_URL}/auth/csrf/restore`, {
       credentials: 'include',
     });
   }
@@ -50,7 +51,7 @@ export const thunkLogin = createAsyncThunk<
     // Ensure CSRF token is available
     await ensureCSRFToken();
     
-    const response = await fetch('/api/auth/login', {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include', 
@@ -76,7 +77,7 @@ export const thunkGoogleLogin = createAsyncThunk<
   { rejectValue: Record<string, string> }
 >('auth/googleLogin', async (idToken, { rejectWithValue }) => {
   try {
-    const response = await fetch('/api/auth/google', {
+    const response = await fetch(`${API_BASE_URL}/auth/google`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',  
@@ -110,7 +111,7 @@ export const thunkSignup = createAsyncThunk<
     // Ensure CSRF token is available
     await ensureCSRFToken();
     
-    const response = await fetch('/api/auth/signup', {
+    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',  
@@ -134,15 +135,20 @@ export const thunkAuthenticate = createAsyncThunk<User | null>(
   'auth/authenticate',
   async () => {
     try {
-      const response = await fetch('/api/auth/', {
+      console.log('Authenticating against:', `${API_BASE_URL}/auth/`);
+      const response = await fetch(`${API_BASE_URL}/auth/`, {
         credentials: 'include',  
       });
+      console.log('Authentication response status:', response.status);
+      
       if (response.ok) {
         const data = await response.json();
+        console.log('Authentication response data:', data);
         return data.errors ? null : data;
       }
       return null;
     } catch (error) {
+      console.error('Authentication error:', error);
       return null;
     }
   }
@@ -150,7 +156,7 @@ export const thunkAuthenticate = createAsyncThunk<User | null>(
 
 export const thunkLogout = createAsyncThunk('auth/logout', async () => {
   try {
-    await fetch('/api/auth/logout', {
+    await fetch(`${API_BASE_URL}/auth/logout`, {
       credentials: 'include',  
     });
     // Clear any stored JWT token

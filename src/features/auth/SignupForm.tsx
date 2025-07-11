@@ -2,7 +2,8 @@ import { useState, FormEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { AppDispatch, RootState } from '../../app/store';
-import { thunkSignup, thunkGoogleLogin } from './authSlice';
+import { thunkSignup } from './authSlice';
+import GoogleLoginButton from './components/GoogleLoginButton';
 
 interface SignupFormErrors {
   email?: string;
@@ -43,14 +44,7 @@ function SignupForm() {
     if ('payload' in res && res.meta.requestStatus === 'rejected') {
       setFormErrors(res.payload || { server: 'Signup failed' });
     } else {
-      navigate('/');
-    }
-  };
-
-  const handleGoogleSignup = async (credential: string) => {
-    const resultAction = await dispatch(thunkGoogleLogin(credential));
-    if (thunkGoogleLogin.fulfilled.match(resultAction)) {
-      navigate('/');
+      navigate('/onboarding');
     }
   };
 
@@ -171,17 +165,15 @@ function SignupForm() {
               {status === 'loading' ? 'SIGNING UP...' : 'SIGN UP'}
             </button>
 
-                         {/* Google Sign Up Button */}
-             <div className="w-full">
-               <div className="flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition duration-200">
-                 <img
-                   className="w-5 h-5 mr-3"
-                   src="/images/google-icon.svg"
-                   alt="Google"
-                 />
-                 <span>Sign up with Google</span>
-               </div>
-             </div>
+            {/* OR Divider */}
+            <div className="flex items-center justify-center">
+              <div className="border-t border-gray-300 flex-grow"></div>
+              <span className="px-3 text-gray-500 text-sm">OR</span>
+              <div className="border-t border-gray-300 flex-grow"></div>
+            </div>
+
+            {/* Google Sign Up Button */}
+            <GoogleLoginButton isSignup={true} />
 
             {/* Terms and Privacy */}
             <div className="text-center">

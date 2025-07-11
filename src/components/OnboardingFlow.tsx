@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
+import { thunkAuthenticate } from '../features/auth/authSlice';
 import { API_ENDPOINTS } from '../config/api';
 import WaitlistEmailForm from './WaitlistEmailForm';
 import EnhancedWaitlistForm from './EnhancedWaitlistForm';
@@ -19,7 +21,41 @@ const OnboardingFlow: React.FC = () => {
   const [selectedUserType, setSelectedUserType] = useState<string>('');
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(true);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { user, status } = useAppSelector((state) => state.auth);
+
+  // Check authentication status on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const result = await dispatch(thunkAuthenticate());
+        console.log('Authentication check result:', result);
+        
+        // If authentication fails, redirect immediately
+        if (!result.payload) {
+          console.log('Authentication failed, redirecting to login...');
+          navigate('/login');
+          return;
+        }
+      } catch (error) {
+        console.error('Authentication error:', error);
+        navigate('/login');
+      } finally {
+        setIsAuthenticating(false);
+      }
+    };
+    checkAuth();
+  }, [dispatch, navigate]);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticating && !user) {
+      console.log('No user found, redirecting to login...');
+      navigate('/login');
+    }
+  }, [isAuthenticating, user, navigate]);
 
   const userTypes: UserTypeOption[] = [
     {
@@ -109,6 +145,9 @@ const OnboardingFlow: React.FC = () => {
 
     setIsLoading(true);
     try {
+      console.log('Saving onboarding data:', { selectedUserType, selectedInterests });
+      console.log('API endpoint:', `${API_ENDPOINTS.onboarding}/user-type`);
+      
       // Save user type
       const userTypeResponse = await fetch(`${API_ENDPOINTS.onboarding}/user-type`, {
         method: 'POST',
@@ -119,8 +158,13 @@ const OnboardingFlow: React.FC = () => {
         body: JSON.stringify({ user_type: selectedUserType }),
       });
 
+      console.log('User type response status:', userTypeResponse.status);
+      
       if (!userTypeResponse.ok) {
-        throw new Error('Failed to save user type');
+        const errorData = await userTypeResponse.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('User type save failed:', errorData);
+        alert(`Failed to save user type: ${errorData.error || 'Unknown error'}`);
+        return;
       }
 
       // Save initial interests
@@ -136,14 +180,21 @@ const OnboardingFlow: React.FC = () => {
         }),
       });
 
+      console.log('Preferences response status:', preferencesResponse.status);
+
       if (!preferencesResponse.ok) {
-        throw new Error('Failed to save preferences');
+        const errorData = await preferencesResponse.json().catch(() => ({ error: 'Unknown error' }));
+        console.error('Preferences save failed:', errorData);
+        alert(`Failed to save preferences: ${errorData.error || 'Unknown error'}`);
+        return;
       }
 
+      console.log('Onboarding data saved successfully, navigating to upload...');
       // Navigate to the next step in the onboarding flow
       navigate('/onboarding/upload');
     } catch (error) {
       console.error('Onboarding error:', error);
+      alert(`Error during onboarding: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
@@ -151,6 +202,25 @@ const OnboardingFlow: React.FC = () => {
 
   const currentUserTypeData = userTypes.find(type => type.id === selectedUserType);
   const stepDescription = getStepDescription(selectedUserType);
+
+  // Show loading while checking authentication
+  if (isAuthenticating) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center mb-4 mx-auto">
+            <span className="text-white font-bold text-sm">🐥</span>
+          </div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated (will be redirected)
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

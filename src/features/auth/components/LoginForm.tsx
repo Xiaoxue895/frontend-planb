@@ -1,7 +1,8 @@
 import { useState, FormEvent } from 'react';
-import { useAppDispatch, useAppSelector } from '@/hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
 import { thunkLogin, clearErrors } from '../authSlice';
 import { Link, useNavigate } from 'react-router-dom';
+import GoogleLoginButton from './GoogleLoginButton';
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
@@ -17,7 +18,7 @@ const LoginForm = () => {
     const resultAction = await dispatch(thunkLogin({ email, password }));
 
     if (thunkLogin.fulfilled.match(resultAction)) {
-      navigate('/congratulations'); 
+      navigate('/onboarding'); 
     }
   };
 
@@ -99,17 +100,15 @@ const LoginForm = () => {
               {status === 'loading' ? 'LOGGING IN...' : 'Log In'}
             </button>
 
-            {/* Google Sign In Button */}
-            <div className="w-full">
-              <div className="flex items-center justify-center px-3 py-2 border border-gray-300 rounded-lg shadow-sm bg-white text-xs font-medium text-gray-700 hover:bg-gray-50 transition duration-200">
-                <img
-                  className="w-4 h-4 mr-2"
-                  src="/images/google-icon.svg"
-                  alt="Google"
-                />
-                <span>Sign in with Google</span>
-              </div>
+            {/* OR Divider */}
+            <div className="flex items-center justify-center">
+              <div className="border-t border-gray-300 flex-grow"></div>
+              <span className="px-3 text-gray-500 text-sm">OR</span>
+              <div className="border-t border-gray-300 flex-grow"></div>
             </div>
+
+            {/* Google Sign In Button */}
+            <GoogleLoginButton />
 
             {/* Sign Up Link */}
             <div className="text-center">
