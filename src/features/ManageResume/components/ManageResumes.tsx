@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/reduxHooks';
 import {
   fetchUserResumes,
@@ -7,14 +7,18 @@ import {
   deleteResume,
   Resume
 } from '../resumeSlice';
+import { useNavigate } from 'react-router-dom';
 
 const ManageResumes = () => {
   const dispatch = useAppDispatch();
-  const { resumes, loading, error } = useAppSelector((state) => state.resumes);
+  const navigate = useNavigate(); 
+  const { userResumes, loading, error } = useAppSelector((state) => state.resumes);
 
   const [title, setTitle] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     dispatch(fetchUserResumes());
@@ -24,64 +28,48 @@ const ManageResumes = () => {
     setTitle('');
     setFile(null);
     setEditingId(null);
-  };
-
-  const handleUpload = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!file) {
-      alert('Please select a file to upload.');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('title', title);
-
-    try {
-      await dispatch(uploadResume(formData)).unwrap();
-      resetForm();
-    } catch (err) {
-      console.error('Upload failed:', err);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingId) return;
 
-    if (!file && title.trim() === '') {
-      alert('Please update the title or select a new file.');
+    if (!file && !editingId) {
+      alert('Please select a file.');
       return;
     }
 
     const formData = new FormData();
     if (file) formData.append('file', file);
-    formData.append('title', title);
+    if (title) formData.append('title', title);
 
     try {
-      await dispatch(updateResume({ resumeId: editingId, formData })).unwrap();
+      if (editingId) {
+        await dispatch(updateResume({ resumeId: editingId, formData })).unwrap();
+      } else {
+        await dispatch(uploadResume(formData)).unwrap();
+      }
       resetForm();
     } catch (err) {
-      console.error('Update failed:', err);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    if (editingId) {
-      handleUpdate(e);
-    } else {
-      handleUpload(e);
+      console.error(err);
     }
   };
 
   const handleDelete = (id: number) => {
-    dispatch(deleteResume(id));
+    if (confirm('Are you sure you want to delete this resume?')) {
+      dispatch(deleteResume(id));
+    }
   };
 
   const handleEdit = (resume: Resume) => {
     setTitle(resume.title || '');
     setEditingId(resume.id);
     setFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -98,13 +86,15 @@ const ManageResumes = () => {
         />
         <input
           type="file"
-          accept=".pdf,.png,.jpg,.jpeg,.gif"
+          accept=".pdf,.docx"
+          ref={fileInputRef}
           onChange={(e) => setFile(e.target.files?.[0] || null)}
           className="w-full p-2 border rounded"
         />
         <button
           type="submit"
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          disabled={loading}
         >
           {editingId ? 'Update Resume' : 'Upload Resume'}
         </button>
@@ -123,7 +113,7 @@ const ManageResumes = () => {
       {error && <p className="text-red-500">{error}</p>}
 
       <ul className="space-y-4">
-        {resumes.map((resume) => (
+        {userResumes.map((resume) => (
           <li
             key={resume.id}
             className="p-4 border rounded flex items-center justify-between"
@@ -152,6 +142,12 @@ const ManageResumes = () => {
               >
                 Delete
               </button>
+              <button
+                onClick={() => navigate(`/onboarding/analyze/${resume.id}`)}
+                className="px-3 py-1 bg-green-600 rounded text-white hover:bg-green-700"
+              >
+                AI Analysis
+              </button>
             </div>
           </li>
         ))}
@@ -161,3 +157,4 @@ const ManageResumes = () => {
 };
 
 export default ManageResumes;
+

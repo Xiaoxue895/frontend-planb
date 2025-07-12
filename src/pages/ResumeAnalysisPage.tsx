@@ -38,7 +38,7 @@ const ResumeAnalysisPage: React.FC = () => {
     try {
       console.log('Starting analysis for resume:', resumeId);
       
-      const response = await fetch(`${API_ENDPOINTS.ai}/resumes/${resumeId}/analyze`, {
+      const response = await fetch(`${API_ENDPOINTS.aiResume}/resumes/${resumeId}/analyze`, {
         method: 'POST',
         credentials: 'include',
       });

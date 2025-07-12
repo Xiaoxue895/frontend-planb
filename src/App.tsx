@@ -11,6 +11,7 @@ import CongratulationsPage from "./pages/CongratulationsPage";
 import JobListPage from "./pages/JobListPage"
 import JobDetailPage from "./pages/JobDetailPage"
 import ManageResumesPage from "./pages/ManageResumePage"
+import ManageCoverLettersPage from "./pages/ManageCoverLettersPage"
 import ResumeUploadPage from "./pages/ResumeUploadPage";
 import ResumeAnalysisPage from "./pages/ResumeAnalysisPage";
 import PricingPage from "./pages/PricingPage";
@@ -40,6 +41,7 @@ function App() {
           <Route path="/jobs" element={<JobListPage />} />
           <Route path="/jobs/:id" element={<JobDetailPage />} />
           <Route path="/resumes" element={<ManageResumesPage />} />
+          <Route path="/coverletters" element={<ManageCoverLettersPage />} />
 
         </Routes>
       </BrowserRouter>

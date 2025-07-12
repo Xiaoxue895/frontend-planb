@@ -47,7 +47,7 @@ const ResumeUploadPage: React.FC = () => {
       }
 
       // Check file type
-      const allowedTypes = ['pdf', 'doc', 'docx', 'rtf', 'wp', 'txt'];
+      const allowedTypes = ['pdf', 'docx'];
       const fileExtension = file.name.split('.').pop()?.toLowerCase();
       if (!fileExtension || !allowedTypes.includes(fileExtension)) {
         throw new Error(`File type not supported. Please use: ${allowedTypes.join(', ')}`);
@@ -194,7 +194,7 @@ const ResumeUploadPage: React.FC = () => {
             </div>
 
             <p className="text-gray-600 text-sm mb-8">
-              Click the button below to upload your resume as a .pdf, .doc, .docx, .rtf, .wp or .txt file (max 10MB)
+              Click the button below to upload your resume as a .pdf,or .docx file (max 10MB)
             </p>
 
             {uploadedFile && (
