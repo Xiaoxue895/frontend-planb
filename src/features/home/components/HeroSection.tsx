@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
   const [email, setEmail] = useState('');
+  const navigate = useNavigate();
 
   const handleGetStarted = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +28,7 @@ const HeroSection = () => {
     }
 
     // Redirect to onboarding flow
-    window.location.href = '/onboarding';
+    navigate('/onboarding');
   };
 
   return (
