@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import API_BASE_URL from '../../config/api';
+import { csrfFetch } from '@/app/csrfFetch';
 
 interface User {
   id: number;
@@ -19,42 +20,14 @@ const initialState: AuthState = {
   errors: null,
 };
 
-// Helper function to get CSRF token from cookies
-const getCSRFTokenFromCookie = (): string | null => {
-  const cookies = document.cookie.split(';');
-  for (let cookie of cookies) {
-    const [name, value] = cookie.trim().split('=');
-    if (name === 'csrf_token') {
-      return value;
-    }
-  }
-  return null;
-};
-
-// Helper function to ensure CSRF token is available
-const ensureCSRFToken = async (): Promise<void> => {
-  const token = getCSRFTokenFromCookie();
-  if (!token) {
-    // Get CSRF token by making a request that will set the cookie
-    await fetch(`${API_BASE_URL}/auth/csrf/restore`, {
-      credentials: 'include',
-    });
-  }
-};
-
 export const thunkLogin = createAsyncThunk<
   User,
   { email: string; password: string },
   { rejectValue: Record<string, string> }
 >('auth/login', async (credentials, { rejectWithValue }) => {
   try {
-    // Ensure CSRF token is available
-    await ensureCSRFToken();
-    
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await csrfFetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include', 
       body: JSON.stringify(credentials),
     });
 
@@ -77,20 +50,17 @@ export const thunkGoogleLogin = createAsyncThunk<
   { rejectValue: Record<string, string> }
 >('auth/googleLogin', async (idToken, { rejectWithValue }) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/google`, {
+    const response = await csrfFetch(`${API_BASE_URL}/auth/google`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',  
       body: JSON.stringify({ idToken }),
     });
 
     if (response.ok) {
       const data = await response.json();
-      // Store the JWT token if provided
       if (data.token) {
         localStorage.setItem('jwt_token', data.token);
       }
-      return data; 
+      return data;
     } else if (response.status < 500) {
       const data = await response.json();
       return rejectWithValue(data);
@@ -108,13 +78,8 @@ export const thunkSignup = createAsyncThunk<
   { rejectValue: Record<string, string> }
 >('auth/signup', async (userData, { rejectWithValue }) => {
   try {
-    // Ensure CSRF token is available
-    await ensureCSRFToken();
-    
-    const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+    const response = await csrfFetch(`${API_BASE_URL}/auth/signup`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',  
       body: JSON.stringify(userData),
     });
 
@@ -136,11 +101,11 @@ export const thunkAuthenticate = createAsyncThunk<User | null>(
   async () => {
     try {
       console.log('Authenticating against:', `${API_BASE_URL}/auth/`);
-      const response = await fetch(`${API_BASE_URL}/auth/`, {
-        credentials: 'include',  
+      const response = await csrfFetch(`${API_BASE_URL}/auth/`, {
+        method: 'GET',
       });
       console.log('Authentication response status:', response.status);
-      
+
       if (response.ok) {
         const data = await response.json();
         console.log('Authentication response data:', data);
@@ -156,14 +121,12 @@ export const thunkAuthenticate = createAsyncThunk<User | null>(
 
 export const thunkLogout = createAsyncThunk('auth/logout', async () => {
   try {
-    await fetch(`${API_BASE_URL}/auth/logout`, {
-      credentials: 'include',  
+    await csrfFetch(`${API_BASE_URL}/auth/logout`, {
+      method: 'POST',
     });
-    // Clear any stored JWT token
     localStorage.removeItem('jwt_token');
     return null;
   } catch (error) {
-    // Even if logout fails on server, clear local state
     localStorage.removeItem('jwt_token');
     return null;
   }
@@ -227,15 +190,15 @@ const authSlice = createSlice({
         state.status = 'succeeded';
         state.user = action.payload.user;
       })
-      
+
       .addCase(thunkGoogleLogin.rejected, (state, action) => {
         state.status = 'failed';
         state.errors = action.payload ?? { server: 'Google login failed' };
-      })
-
+      });
   },
 });
 
 export const { setUser, clearErrors } = authSlice.actions;
 export default authSlice.reducer;
+
 
