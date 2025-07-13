@@ -33,37 +33,32 @@ const CompletionModal: React.FC<CompletionModalProps> = ({ isOpen, onClose }) =>
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
-        {/* Characters */}
+
         <div className="text-center mb-6">
-          <div className="flex justify-center items-center space-x-4">
-            <img
-              src="/images/chick-pc-owl.png"
-              alt="Chick and Owl with Laptop"
-              className="w-32 h-32 object-contain"
-            />
-          </div>
+          <img
+            src="/images/chick-pc-owl.png"
+            alt="Chick and Owl with Laptop"
+            className="w-32 h-32 object-contain mx-auto"
+          />
         </div>
 
-        {/* Main Message */}
         <h2 className="text-2xl font-bold text-gray-900 text-center mb-4">
-          We want to feature you to recruiters!
+          Help us connect you with recruiters!
         </h2>
 
-        {/* Description */}
         <div className="text-gray-600 text-sm mb-6">
-          <p className="mb-4">Hey Mia,</p>
+          <p className="mb-4">Dear Job Seeker,</p>
           <p className="mb-4">
-            Your skills are in demand! We'd love to potentially feature your profile even further to 
-            companies that are hiring for your skills and preferences. All you have to do is opt in 
-            and we'll shoot you an email beforehand if your profile is going to be featured. Your 
-            current and past employers will not see your profile and you can opt out at anytime.
+            Your skills and preferences have been saved. We may recommend your profile to recruiters who are looking 
+            for candidates like you. Your information is kept private from your current or past employers, 
+            and you can opt out anytime.
           </p>
-          <p className="font-medium">
-            Interested? We'll just need you to confirm the following:
+          <p className="mb-4">
+            You can now explore our web app, or join our Discord community to share feedback and help us improve.
           </p>
+          <p className="font-medium">Before moving forward, please confirm the following:</p>
         </div>
 
-        {/* Checkboxes */}
         <div className="space-y-3 mb-6">
           <label className="flex items-start space-x-3">
             <input
@@ -72,7 +67,7 @@ const CompletionModal: React.FC<CompletionModalProps> = ({ isOpen, onClose }) =>
               defaultChecked
             />
             <span className="text-sm text-gray-700">
-              I'm ready to take calls with companies
+              I agree to be contacted by recruiters
             </span>
           </label>
           <label className="flex items-start space-x-3">
@@ -82,21 +77,29 @@ const CompletionModal: React.FC<CompletionModalProps> = ({ isOpen, onClose }) =>
               defaultChecked
             />
             <span className="text-sm text-gray-700">
-              I'll respond to messages from companies in a timely manner
+              I will respond to messages from recruiters in a timely manner
             </span>
           </label>
         </div>
 
-        {/* Button */}
         <button
           onClick={handleFeatureProfile}
-          className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors"
+          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
         >
-          Feature my profile
+          Go to Web App
         </button>
+
+        <a
+          href="https://discord.gg/your-discord-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block mt-4 text-center text-sm text-orange-500 hover:underline"
+        >
+          Join our Discord Community
+        </a>
       </div>
     </div>
   );
 };
 
-export default CompletionModal; 
+export default CompletionModal;

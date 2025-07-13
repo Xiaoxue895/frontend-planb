@@ -48,7 +48,7 @@ const Footer = () => {
                 </li>
                 <li>
                   <a 
-                    href="#download" 
+                    href="/download" 
                     className="text-gray-700 hover:text-blue-500 transition-colors"
                   >
                     Download Mobile App
@@ -90,7 +90,7 @@ const Footer = () => {
               <ul className="space-y-2">
                 <li>
                   <a 
-                    href="#about" 
+                    href="https://www.linkedin.com/company/jobhatch/" 
                     className="text-gray-700 hover:text-blue-500 transition-colors"
                   >
                     About Us
@@ -98,7 +98,7 @@ const Footer = () => {
                 </li>
                 <li>
                   <a 
-                    href="#" 
+                    href="https://www.linkedin.com/company/jobhatch/" 
                     className="text-gray-700 hover:text-blue-500 transition-colors"
                   >
                     Join Us
@@ -129,8 +129,17 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Contact Form */}
-          <form onSubmit={handleContactSubmit} className="flex flex-col sm:flex-row justify-center items-center gap-3 mb-8">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (email) {
+                window.location.href = `mailto:teamjobhatch@outlook.com?subject=Contact&body=My email: ${email}`;
+              } else {
+                alert("Please enter your email address.");
+              }
+            }}
+            className="flex flex-col sm:flex-row justify-center items-center gap-3 mb-8"
+          >
             <input
               type="email"
               value={email}
@@ -146,6 +155,8 @@ const Footer = () => {
               Contact Us
             </button>
           </form>
+
+
 
           {/* Stars */}
           <div className="flex justify-center space-x-2 mb-8">

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../config/api';
+import Navbar from '@/components/Navbar';
+import { csrfFetch,restoreCSRF} from '@/app/csrfFetch';
 
 const ResumeUploadPage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,7 +22,7 @@ const ResumeUploadPage: React.FC = () => {
     if (!uploadedFile) {
       const input = document.createElement('input');
       input.type = 'file';
-      input.accept = '.pdf,.doc,.docx,.rtf,.wp,.txt';
+      input.accept = '.pdf,.docx';
       input.onchange = (event) => {
         const file = (event.target as HTMLInputElement).files?.[0];
         if (file) {
@@ -37,10 +39,10 @@ const ResumeUploadPage: React.FC = () => {
   const uploadFile = async (file: File) => {
     setIsUploading(true);
     setError('');
-    
+
     try {
       console.log('Starting file upload:', file.name);
-      
+
       // Check file size (limit to 10MB)
       if (file.size > 10 * 1024 * 1024) {
         throw new Error('File size must be less than 10MB');
@@ -53,40 +55,31 @@ const ResumeUploadPage: React.FC = () => {
         throw new Error(`File type not supported. Please use: ${allowedTypes.join(', ')}`);
       }
 
+      await restoreCSRF();
+
       const formData = new FormData();
       formData.append('file', file);
       formData.append('title', file.name);
 
-      console.log('Making API request to', API_ENDPOINTS.resumes);
-      
-      const response = await fetch(API_ENDPOINTS.resumes, {
+      const response = await csrfFetch(API_ENDPOINTS.resumes, {
         method: 'POST',
-        credentials: 'include',
         body: formData,
       });
 
-      console.log('API response status:', response.status);
+      const data = await response.json();
+      console.log('Upload successful:', data);
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Upload successful:', data);
-        
-        // Show success message briefly
-        alert(`Resume uploaded successfully! ${data.storage_type === 'local' ? '(Stored locally - AWS not configured)' : ''}`);
-        
-        // Navigate to analysis page with resume ID
-        navigate(`/onboarding/analyze/${data.resume.id}`);
-      } else {
-        const errorData = await response.json();
-        console.error('Upload failed:', errorData);
-        throw new Error(errorData.error || 'Upload failed');
-      }
+      alert(
+        `Resume uploaded successfully! ${
+          data.storage_type === 'local' ? '(Stored locally - AWS not configured)' : ''
+        }`
+      );
+
+      navigate(`/onboarding/analyze/${data.resume.id}`);
     } catch (error: any) {
       console.error('Upload error:', error);
       const errorMessage = error.message || 'Failed to upload resume. Please try again.';
       setError(errorMessage);
-      
-      // Show error in alert for immediate feedback
       alert(`Upload failed: ${errorMessage}`);
     } finally {
       setIsUploading(false);
@@ -100,67 +93,68 @@ const ResumeUploadPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">🐥</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900">JOBHATCH</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-              <span className="font-medium">Mia Yue</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <Navbar />
       {/* Progress Bar */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-6 py-4">
           <div className="flex items-center justify-center space-x-8">
+
             <div className="flex items-center">
               <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-semibold">1</span>
               </div>
               <span className="ml-2 text-orange-500 font-medium">Resume/CV</span>
             </div>
+
             <div className="w-16 h-0.5 bg-gray-300"></div>
+
             <div className="flex items-center">
               <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                 <span className="text-gray-500 text-sm font-semibold">2</span>
               </div>
               <span className="ml-2 text-gray-400 font-medium">Analyze</span>
             </div>
+
             <div className="w-16 h-0.5 bg-gray-300"></div>
+
             <div className="flex items-center">
               <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                 <span className="text-gray-500 text-sm font-semibold">3</span>
               </div>
-              <span className="ml-2 text-gray-400 font-medium">Profile</span>
+              <span className="ml-2 text-gray-400 font-medium">Pricing</span>
             </div>
+
             <div className="w-16 h-0.5 bg-gray-300"></div>
+
             <div className="flex items-center">
               <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                 <span className="text-gray-500 text-sm font-semibold">4</span>
               </div>
-              <span className="ml-2 text-gray-400 font-medium">Preferences</span>
+              <span className="ml-2 text-gray-400 font-medium">Profile</span>
             </div>
+
+            {/* <div className="w-16 h-0.5 bg-gray-300"></div>
+
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                <span className="text-gray-500 text-sm font-semibold">5</span>
+              </div>
+              <span className="ml-2 text-gray-400 font-medium">Preferences</span>
+            </div> */}
+
             <div className="w-16 h-0.5 bg-gray-300"></div>
+
             <div className="flex items-center">
               <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                 <span className="text-gray-500 text-sm font-semibold">5</span>
               </div>
               <span className="ml-2 text-gray-400 font-medium">Done</span>
             </div>
+
           </div>
         </div>
       </div>
+
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-16">
@@ -221,13 +215,6 @@ const ResumeUploadPage: React.FC = () => {
               {isUploading ? 'Uploading...' : 'Upload Resume'}
             </button>
 
-            {/* Debug info for development */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="mt-4 p-2 bg-gray-100 rounded text-xs text-gray-600">
-                <p>Debug: API endpoint {API_ENDPOINTS.resumes}</p>
-                <p>Accepted types: PDF, DOC, DOCX, RTF, WP, TXT</p>
-              </div>
-            )}
           </div>
 
           <button

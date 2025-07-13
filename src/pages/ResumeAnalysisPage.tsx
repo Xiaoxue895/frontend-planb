@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { API_ENDPOINTS } from '../config/api';
+import Navbar from '@/components/Navbar';
+import { csrfFetch } from '@/app/csrfFetch';
 
 interface AnalysisData {
   score_overall: number;
@@ -37,14 +39,13 @@ const ResumeAnalysisPage: React.FC = () => {
   const analyzeResume = async () => {
     try {
       console.log('Starting analysis for resume:', resumeId);
-      
-      const response = await fetch(`${API_ENDPOINTS.aiResume}/resumes/${resumeId}/analyze`, {
+  
+      const response = await csrfFetch(`${API_ENDPOINTS.aiResume}/resumes/${resumeId}/analyze`, {
         method: 'POST',
-        credentials: 'include',
       });
-
+  
       console.log('Analysis response status:', response.status);
-
+  
       if (response.ok) {
         const data = await response.json();
         console.log('Analysis data received:', data);
@@ -104,32 +105,72 @@ const ResumeAnalysisPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">🐥</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900">JOBHATCH</span>
-            </div>
+      <Navbar />
             
-            {/* Navigation */}
-            <div className="flex items-center gap-8 text-sm">
-              <span className="text-gray-600">Resume/CV</span>
-              <span className="text-orange-500 font-medium">Job Analysis</span>
-              <span className="text-gray-600">Profile</span>
-              <span className="text-gray-600">Preferences</span>
-              <span className="text-gray-600">Done</span>
+      {/* Progress Bar */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-center space-x-8">
+
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <span className="ml-2 text-green-600 font-medium">Resume/CV</span>
             </div>
 
-            <div className="flex items-center gap-2 text-gray-600">
-              <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-              <span className="font-medium">Mia Yue</span>
+            <div className="w-16 h-0.5 bg-orange-500"></div>
+
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                <span className="text-white text-sm font-semibold">2</span>
+              </div>
+              <span className="ml-2 text-orange-500 font-medium">Analyze</span>
             </div>
+
+            <div className="w-16 h-0.5 bg-gray-300"></div>
+
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                <span className="text-gray-500 text-sm font-semibold">3</span>
+              </div>
+              <span className="ml-2 text-gray-400 font-medium">Pricing</span>
+            </div>
+
+            <div className="w-16 h-0.5 bg-gray-300"></div>
+
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                <span className="text-gray-500 text-sm font-semibold">4</span>
+              </div>
+              <span className="ml-2 text-gray-400 font-medium">Profile</span>
+            </div>
+
+            {/* <div className="w-16 h-0.5 bg-gray-300"></div>
+
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                <span className="text-gray-500 text-sm font-semibold">5</span>
+              </div>
+              <span className="ml-2 text-gray-400 font-medium">Preferences</span>
+            </div> */}
+
+            <div className="w-16 h-0.5 bg-gray-300"></div>
+
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                <span className="text-gray-500 text-sm font-semibold">5</span>
+              </div>
+              <span className="ml-2 text-gray-400 font-medium">Done</span>
+            </div>
+
           </div>
         </div>
       </div>
+
+
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 py-8">
@@ -346,17 +387,6 @@ const ResumeAnalysisPage: React.FC = () => {
             </button>
           </div>
         </div>
-
-        {/* Debug info for development */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-8 p-4 bg-gray-100 rounded-lg text-xs text-gray-600">
-            <p><strong>Debug Info:</strong></p>
-            <p>Resume ID: {resumeId}</p>
-            <p>API Endpoint: {API_ENDPOINTS.ai}/resumes/{resumeId}/analyze</p>
-            <p>Analysis Score: {analysisData.score_overall}</p>
-            <p>Job Matches: {jobMatches.length}</p>
-          </div>
-        )}
 
         {/* Analysis info for users */}
         <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">

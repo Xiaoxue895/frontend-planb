@@ -7,6 +7,7 @@ import { thunkAuthenticate } from '../features/auth/authSlice';
 import { API_ENDPOINTS } from '../config/api';
 import WaitlistEmailForm from './WaitlistEmailForm';
 import EnhancedWaitlistForm from './EnhancedWaitlistForm';
+import Navbar from './Navbar';
 
 interface UserTypeOption {
   id: string;
@@ -225,25 +226,7 @@ const OnboardingFlow: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">🐥</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900">JOBHATCH</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
-              <span className="font-medium">Mia Yue</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-          </div>
-                </div>
-              </div>
+      <Navbar />
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-16">
