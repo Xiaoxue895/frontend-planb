@@ -18,6 +18,7 @@ import PricingPage from "./pages/PricingPage";
 import ProfileCreationPage from "./pages/ProfileCreationPage";
 import JobPreferencesPage from "./pages/JobPreferencesPage";
 import OnboardingCompletePage from "./pages/OnboardingCompletePage";
+import Waitlist from "./pages/WaitListPage";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/download" element={<DownloadPage />} />
           <Route path="/phone-demo" element={<PhoneDemo />} />
+          <Route path="/waitlist" element={<Waitlist />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/onboarding/upload" element={<ResumeUploadPage />} />
           <Route path="/onboarding/analyze/:resumeId" element={<ResumeAnalysisPage />} />

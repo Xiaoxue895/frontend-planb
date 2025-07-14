@@ -7,7 +7,10 @@ export const API_ENDPOINTS = {
   resumes: `${API_BASE_URL}/resumes`,
   coverLetters: `${API_BASE_URL}/cover_letters`,
   onboarding: `${API_BASE_URL}/onboarding`,
-  auth: `${API_BASE_URL}/auth`,
+  auth: {
+    signup: '/api/auth/signup',
+    login: '/api/auth/login',
+  },
   profiles: `${API_BASE_URL}/profiles`,
   aiResume: `${API_BASE_URL}/ai_resume`, 
   aiCoverLetter: `${API_BASE_URL}/ai_cover_letter`,
