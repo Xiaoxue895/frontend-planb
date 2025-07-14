@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie';
-import { API_ENDPOINTS } from '@/config/api';
+import API_BASE_URL from '../config/api';
 
 export async function csrfFetch(url: string, options: RequestInit = {}) {
 
@@ -33,5 +33,5 @@ export async function csrfFetch(url: string, options: RequestInit = {}) {
 }
 
 export function restoreCSRF() {
-  return csrfFetch(API_ENDPOINTS.auth.csrfRestore);
+  return csrfFetch(`${API_BASE_URL}/auth/csrf/restore`);
 }
