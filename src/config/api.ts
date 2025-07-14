@@ -8,8 +8,8 @@ export const API_ENDPOINTS = {
   coverLetters: `${API_BASE_URL}/cover_letters`,
   onboarding: `${API_BASE_URL}/onboarding`,
   auth: {
-    signup: '/api/auth/signup',
-    login: '/api/auth/login',
+    signup: `${API_BASE_URL}/auth/signup`,
+    login: `${API_BASE_URL}/auth/login`,
   },
   profiles: `${API_BASE_URL}/profiles`,
   aiResume: `${API_BASE_URL}/ai_resume`, 
