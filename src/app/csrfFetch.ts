@@ -33,5 +33,5 @@ export async function csrfFetch(url: string, options: RequestInit = {}) {
 }
 
 export function restoreCSRF() {
-  return csrfFetch(`${API_ENDPOINTS.auth}/csrf/restore`);
+  return csrfFetch(API_ENDPOINTS.auth.csrfRestore);
 }

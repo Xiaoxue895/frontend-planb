@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
   auth: {
     signup: `${API_BASE_URL}/auth/signup`,
     login: `${API_BASE_URL}/auth/login`,
+    csrfRestore: `${API_BASE_URL}/auth/csrf/restore`,
   },
   profiles: `${API_BASE_URL}/profiles`,
   aiResume: `${API_BASE_URL}/ai_resume`, 
